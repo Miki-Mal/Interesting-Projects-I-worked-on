@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> simple animation </title>
+	<meta http-equiv="Content-Type" content="text/html;charset=us-ascii">
+	
+	<style type="text/css">
+	
+		.movingButton {
+			top: 100px;
+    		left: 200px;
+    		position: absolute;
+		}
+		
+		.ok_btn {
+			background-color: green;
+		}
+		
+		.no_btn {
+			background-color: red;
+		}
+
+		
+		#area {
+			width: 98%;
+			height: 95%;
+    		position: absolute;
+    		background-color: grey;
+		}
+		
+		
+	</style>
+	<script type="text/javascript">
+		var varianceOfMovment = 50;
+		var speed = 400;
+				
+		var numOfButtons_ok = 0;
+		var numOfButtons_no = 0;
+		var score = 0;
+		var flag = 0;
+		
+		function addButton_ok( i ){
+			var btn_id = "button_ok" + i;
+			var newDiv = document.createElement("div");
+			newDiv.id = btn_id;
+			document.getElementById("area").appendChild(newDiv);
+			newDiv.innerHTML = "<button type=\"button\" class=\"ok_btn\" onclick=\"score_add(5)\"> $$$ </button>";
+			newDiv.style.left = Math.floor(Math.random() * 500) + "px";
+			newDiv.style.top = Math.floor(Math.random() * 600) + "px";
+			newDiv.classList.add( "movingButton");
+		}
+		
+		function addButton_no( i ){
+			var btn_id = "button_no" + i;
+			var newDiv = document.createElement("div");
+			newDiv.id = btn_id;
+			document.getElementById("area").appendChild(newDiv);
+			newDiv.innerHTML = "<button type=\"button\" class=\"no_btn\" onclick=\"score_add(-10)\"> ~~~ </button>";
+			newDiv.style.left = Math.floor(Math.random() * document.getElementById("area").offsetWidth) + "px";
+			newDiv.style.top = Math.floor(Math.random() * document.getElementById("area").offsetHeight) + "px";
+			newDiv.classList.add( "movingButton");
+		}
+		
+		function addStartingButtons( n_ok, n_no ){
+			for (let i = 0; i < n_ok; i++){
+				addButton_ok( i );
+			}
+			for (let i = 0; i < n_no; i++){
+				addButton_no( i );
+			}
+			numOfButtons_ok += n_ok;
+			numOfButtons_no += n_no;
+		}
+		
+		function add_more_buttons_no( n_no ){
+			for (let i = 0; i < n_no; i++){
+				addButton_no( numOfButtons_no + i );
+			}
+			numOfButtons_no += n_no;
+		}
+		
+		function adjust_x( x , move){ 
+			if (x +move < 0 || x + move> document.getElementById("area").offsetWidth - 40){
+				return x - move;
+			}
+			else {
+				return x + move;
+			}
+		}
+		
+		function adjust_y( y , move){ 
+			if ( y +move < 0 || y + move> document.getElementById("area").offsetHeight - 20){
+				return y - move;
+			}
+			else {
+				return y + move;
+			}
+		}
+		
+		function moveButton_ok(i){
+			var btn_id = "button_ok" + i;
+			var btn = document.getElementById(btn_id)
+			var x = adjust_x( btn.offsetLeft, Math.floor( (Math.random() - 0.5)* varianceOfMovment) );
+			var y = adjust_y( btn.offsetTop, Math.floor( (Math.random() - 0.5)* varianceOfMovment) );
+			btn.style.left = x + "px";
+			btn.style.top = y + "px";
+		}
+		
+		function moveButton_no(i){
+			var btn_id = "button_no" + i;
+			var btn = document.getElementById(btn_id)
+			var x = adjust_x( btn.offsetLeft, Math.floor( (Math.random() - 0.5)* varianceOfMovment) );
+			var y = adjust_y( btn.offsetTop, Math.floor( (Math.random() - 0.5)* varianceOfMovment) );
+			btn.style.left = x + "px";
+			btn.style.top = y + "px";
+		}
+		
+		
+		function moveAllButtons(){
+			for (let i = 0; i < numOfButtons_ok; i++){
+				moveButton_ok( i );
+			}
+			for (let i = 0; i < numOfButtons_no; i++){
+				moveButton_no( i );
+			}
+			
+			if (score >= 20 && flag == 0) {
+				flag = 1;
+				speed=300;
+				add_more_buttons_no(10);
+				window.setTimeout('moveAllButtons();', speed);
+			}
+			else {
+				window.setTimeout('moveAllButtons();', speed);
+			}
+		}
+		
+		function score_add( i, id ){
+			score += i;
+			document.getElementById("score").innerHTML = score
+		}
+		
+		function start(){
+			addStartingButtons(10,10);
+			moveAllButtons();
+			document.getElementById("start").style.display = "none";
+		}
+		
+		
+		
+		
+	</script>
+</head>
+
+<body>
+
+	Score: <span id="score">0</span>
+	<button id="start" type="button" onclick="start()" >Start</button>
+	
+	<div id="area"></div>
+
+</body>
+</html>
